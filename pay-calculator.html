@@ -74,7 +74,7 @@
   }
 
   .flag-strip .s1 { width: 60px; background: var(--green); }
-  .flag-strip .s2 { width: 24px; background: var(--accent); border-radius: 50%; height: 20px; margin-top: -8px; }
+  .flag-strip .s2 { display: none; }
   .flag-strip .s3 { width: 60px; background: var(--green); }
 
   .page-title {
@@ -295,6 +295,39 @@
     color: var(--text-muted);
   }
 
+  /* ৩০ জুন ২০২৬ detected box */
+  .detected-card {
+    background: var(--green-faint);
+    border: 1.5px solid var(--green-faint2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+
+  .detected-card-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  .detected-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+
+  .detected-card-row span:first-child { color: var(--text-muted); }
+  .detected-card-row span:last-child {
+    font-weight: 700;
+    color: var(--green);
+    font-family: 'Inter', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+
   .phase-tabs {
     display: flex;
     gap: 0;
@@ -311,12 +344,12 @@
   .phase-tab {
     flex: 1;
     min-width: max-content;
-    padding: 8px 12px;
+    padding: 8px 10px;
     border: none;
     background: transparent;
     color: var(--text-muted);
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     border-radius: calc(var(--radius-sm) - 3px);
     cursor: pointer;
@@ -414,6 +447,16 @@
     line-height: 1.5;
   }
 
+  .detected-box {
+    background: var(--green-faint);
+    border: 1.5px solid var(--green-faint2);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 0.875rem;
+    color: var(--green);
+    font-weight: 500;
+  }
+
   .error-box {
     background: var(--accent-faint);
     border: 1.5px solid #f5c6cb;
@@ -438,36 +481,12 @@
     margin: 0 auto;
     line-height: 1.5;
   }
-
-  .section-divider {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-faint);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .section-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
 </style>
 
 <div class="page-header">
-  <div class="flag-strip">
-    <span class="s1"></span>
-    <span class="s2"></span>
-    <span class="s3"></span>
-  </div>
   <h1 class="page-title">জাতীয় বেতনস্কেল ২০২৬</h1>
   <p class="page-sub">সরকারি কর্মচারীদের নতুন বেতন হিসাব করুন</p>
-  <span class="gazette-badge">✓ গেজেট: ১৭ সেপ্টেম্বর ২০২৬ · এস. আর. ও. নং ৩৪৭</span>
+  <span class="gazette-badge">গেজেট: ১৭ সেপ্টেম্বর ২০২৬ · এস. আর. ও. নং ৩৪৭</span>
 </div>
 
 <div class="error-box" id="errorBox"></div>
@@ -506,9 +525,13 @@
   </div>
 
   <div class="form-group" id="currentSalaryGroup">
-    <label>৩০ জুন ২০২৬ তারিখে মূল বেতন (টাকা)</label>
-    <input type="number" id="currentSalary" placeholder="যেমন: ১৬০০০" min="0" step="1">
+    <label>বর্তমান মূল বেতন (জুলাই ২০২৬, ২০১৫ স্কেল অনুযায়ী, টাকা)</label>
+    <input type="number" id="currentSalary" placeholder="যেমন: ১৩৭৯০" min="0" step="1">
     <div class="hint" id="scaleHint"></div>
+  </div>
+
+  <div class="form-group" id="detectedSalaryGroup" style="display:none;">
+    <div class="detected-box" id="detectedBox"></div>
   </div>
 </div>
 
@@ -516,22 +539,30 @@
 <div class="card">
   <div class="card-title"><span class="step-num">২</span> কর্মস্থলের এলাকা</div>
   <div class="radio-group">
-    <label><input type="radio" name="area" value="dhaka" checked> ঢাকা উত্তর/দক্ষিণ সিটি</label>
-    <label><input type="radio" name="area" value="other_city"> অন্য সিটি কর্পোরেশন*</label>
+    <label><input type="radio" name="area" value="dhaka" checked> ঢাকা উত্তর/দক্ষিণ সিটি কর্পোরেশন</label>
+    <label><input type="radio" name="area" value="other_city"> অন্য ১১ সিটি কর্পোরেশন ও নির্দিষ্ট পৌর এলাকা*</label>
     <label><input type="radio" name="area" value="other"> অন্যান্য স্থান</label>
   </div>
-  <div class="hint" style="margin-top: 8px;">*চট্টগ্রাম, রাজশাহী, খুলনা, সিলেট, বরিশাল, নারায়ণগঞ্জ, গাজীপুর, ময়মনসিংহ, কুমিল্লা, রংপুর, বগুড়া, সাভার ও কক্সবাজার</div>
+  <div class="hint" style="margin-top: 8px;">*খুলনা, রাজশাহী, চট্টগ্রাম, সিলেট, বরিশাল, নারায়ণগঞ্জ, কুমিল্লা, রংপুর, গাজীপুর, ময়মনসিংহ ও বগুড়া সিটি কর্পোরেশন এবং সাভার ও কক্সবাজার পৌর এলাকা</div>
 </div>
 
 <!-- Step 3 -->
 <div class="card">
-  <div class="card-title"><span class="step-num">৩</span> সন্তান সংখ্যা (শিক্ষা সহায়ক ভাতার জন্য)</div>
-  <div class="radio-group">
-    <label><input type="radio" name="children" value="0" checked> সন্তান নেই</label>
-    <label><input type="radio" name="children" value="1"> ১ সন্তান</label>
-    <label><input type="radio" name="children" value="2"> ২ বা তার বেশি</label>
+  <div class="card-title"><span class="step-num">৩</span> বয়স ও সন্তান</div>
+  <div class="form-group">
+    <label>বর্তমান বয়স (বছর) — চিকিৎসা ভাতার জন্য</label>
+    <input type="number" id="ageInput" placeholder="যেমন: ৪৫" min="18" max="65" step="1">
+    <div class="hint">প্রথম-তৃতীয় পর্যায়: ১,৫০০ টাকা (সবার জন্য) · চতুর্থ পর্যায়: ৫০ বছর পর্যন্ত ৩,০০০ টাকা · ৫০ বছরের বেশি ৪,০০০ টাকা</div>
   </div>
-  <div class="hint" style="margin-top: 8px;">প্রতি সন্তানে ৫০০ টাকা, সর্বোচ্চ ২ সন্তান (২৩ বছর পর্যন্ত)</div>
+  <div class="form-group">
+    <label>সন্তান সংখ্যা (শিক্ষা সহায়ক ভাতার জন্য)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="children" value="0" checked> সন্তান নেই</label>
+      <label><input type="radio" name="children" value="1"> ১ সন্তান</label>
+      <label><input type="radio" name="children" value="2"> ২ বা তার বেশি</label>
+    </div>
+    <div class="hint" style="margin-top: 8px;">প্রতি সন্তানে ৫০০ টাকা, সর্বোচ্চ ২ সন্তান · বয়স সীমা অতিক্রান্ত সন্তান গণনা থেকে বাদ দিন · প্রথম–তৃতীয় পর্যায়: ২১ বছর পর্যন্ত · চতুর্থ পর্যায় (জানু ২০২৮+): ২৩ বছর পর্যন্ত</div>
+  </div>
 </div>
 
 <button class="btn-calc" onclick="calculate()">বেতন হিসাব করুন →</button>
@@ -546,10 +577,56 @@
     </div>
   </div>
 
+  <!-- ৩০ জুন ২০২৬ summary -->
+  <div class="detected-card" id="june30Card">
+    <div class="detected-card-label">৩০ জুন ২০২৬ (বর্তমান স্কেল)</div>
+    <div class="detected-card-row" style="margin-bottom:6px;">
+      <span>মূল বেতন</span>
+      <span id="june30Basic">—</span>
+    </div>
+    <div class="detected-card-row" style="margin-bottom:6px;">
+      <span>বাড়ি ভাড়া ভাতা</span>
+      <span id="june30HRA">—</span>
+    </div>
+    <div class="detected-card-row" style="margin-bottom:6px;">
+      <span>চিকিৎসা ভাতা</span>
+      <span id="june30Medical">—</span>
+    </div>
+    <div class="detected-card-row" style="margin-bottom:6px;" id="june30TiffinRow">
+      <span>টিফিন ভাতা</span>
+      <span id="june30Tiffin">—</span>
+    </div>
+    <div class="detected-card-row" style="margin-bottom:6px;" id="june30TransportRow">
+      <span>যাতায়াত ভাতা</span>
+      <span id="june30Transport">—</span>
+    </div>
+    <div class="detected-card-row" style="margin-bottom:6px;" id="june30WashRow">
+      <span>ধোলাই ভাতা</span>
+      <span id="june30Wash">—</span>
+    </div>
+    <div class="detected-card-row" style="margin-bottom:6px;" id="june30EduRow">
+      <span>শিক্ষা সহায়ক ভাতা</span>
+      <span id="june30Edu">—</span>
+    </div>
+    <div style="border-top: 1.5px solid var(--green-faint2); margin-top: 8px; padding-top: 8px;">
+      <div class="detected-card-row">
+        <span style="font-weight:700; color: var(--green);">মাসিক মোট</span>
+        <span id="june30Total" style="font-size: 1.1rem;">—</span>
+      </div>
+    </div>
+    <div style="border-top: 1px dashed var(--green-faint2); margin-top: 8px; padding-top: 8px;">
+      <div class="detected-card-row" style="opacity: 0.8;">
+        <span style="font-size:0.85rem;">🗓 বাংলা নববর্ষ ভাতা <span style="font-size:0.75rem; opacity:0.7;">(বার্ষিক · পহেলা বৈশাখে)</span></span>
+        <span id="june30BNY" style="font-size:0.9rem;">—</span>
+      </div>
+    </div>
+  </div>
+
   <div class="phase-tabs">
-    <button class="phase-tab active" onclick="showPhase(0, this)">জুলাই-ডিসেম্বর ২০২৬</button>
-    <button class="phase-tab" onclick="showPhase(1, this)">জানুয়ারি-জুন ২০২৭</button>
-    <button class="phase-tab" onclick="showPhase(2, this)">জুলাই ২০২৭ থেকে</button>
+    <button class="phase-tab active" onclick="showPhase(0, this)">প্রথম পর্যায়<br><small>জুল-ডিসে ২০২৬</small></button>
+    <button class="phase-tab" onclick="showPhase(1, this)">দ্বিতীয় পর্যায়<br><small>জানু-জুন ২০২৭</small></button>
+    <button class="phase-tab" onclick="showPhase(2, this)">তৃতীয় পর্যায়<br><small>জুল-ডিসে ২০২৭</small></button>
+    <button class="phase-tab" onclick="showPhase(3, this)">চতুর্থ পর্যায়<br><small>জানু ২০২৮+</small></button>
   </div>
 
   <!-- Phase 0 -->
@@ -557,10 +634,10 @@
     <div class="big-number">
       <div class="big-number-label">মাসিক মোট প্যাকেজ (ভাতা সহ)</div>
       <div class="big-number-value" id="p0total">—</div>
-      <div class="big-number-sub">জুলাই ২০২৬ থেকে ডিসেম্বর ২০২৬ পর্যন্ত</div>
+      <div class="big-number-sub">জুলাই ২০২৬ - ডিসেম্বর ২০২৬</div>
     </div>
     <table class="breakdown-table" id="p0table"></table>
-    <div class="notice-box">বার্ষিক ইনক্রিমেন্ট (বেতনবৃদ্ধি) এই পর্যায়ে প্রযোজ্য নয়।</div>
+    <div class="notice-box">মূল বেতন বৃদ্ধি: গ্রেড ১-৯ → ৪০%, গ্রেড ১০-২০ → ৫০%। সকল ভাতা ৩০ জুন ২০২৬-এর নির্দিষ্ট অঙ্কে (গেজেট অনুচ্ছেদ ১(৩)(ঞ))।</div>
   </div>
 
   <!-- Phase 1 -->
@@ -568,9 +645,10 @@
     <div class="big-number">
       <div class="big-number-label">মাসিক মোট প্যাকেজ (ভাতা সহ)</div>
       <div class="big-number-value" id="p1total">—</div>
-      <div class="big-number-sub">জানুয়ারি ২০২৭ থেকে জুন ২০২৭ পর্যন্ত</div>
+      <div class="big-number-sub">জানুয়ারি ২০২৭ - জুন ২০২৭</div>
     </div>
     <table class="breakdown-table" id="p1table"></table>
+    <div class="notice-box">মূল বেতন বৃদ্ধি: গ্রেড ১-৯ → ৭০%, গ্রেড ১০-২০ → ৭৫%। সকল ভাতা ৩০ জুন ২০২৬-এর নির্দিষ্ট অঙ্কে (গেজেট অনুচ্ছেদ ১(৩)(ঞ))।</div>
   </div>
 
   <!-- Phase 2 -->
@@ -578,10 +656,21 @@
     <div class="big-number">
       <div class="big-number-label">মাসিক মোট প্যাকেজ (ভাতা সহ)</div>
       <div class="big-number-value" id="p2total">—</div>
-      <div class="big-number-sub">জুলাই ২০২৭ থেকে পূর্ণ হারে</div>
+      <div class="big-number-sub">জুলাই ২০২৭ - ডিসেম্বর ২০২৭</div>
     </div>
     <table class="breakdown-table" id="p2table"></table>
-    <div class="notice-box">এই পর্যায় থেকে বার্ষিক ইনক্রিমেন্ট প্রযোজ্য হবে এবং নতুন স্কেলের পূর্ণ মূল বেতন কার্যকর হবে।</div>
+    <div class="notice-box">পূর্ণ মূল বেতন (১০০%) + ১ বার্ষিক ইনক্রিমেন্ট (জুলাই ২০২৭ থেকে)। সকল ভাতা এখনও ৩০ জুন ২০২৬-এর নির্দিষ্ট অঙ্কে (গেজেট অনুচ্ছেদ ১(৩)(ঞ))।</div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="phase-panel" id="phase3">
+    <div class="big-number">
+      <div class="big-number-label">মাসিক মোট প্যাকেজ (ভাতা সহ)</div>
+      <div class="big-number-value" id="p3total">—</div>
+      <div class="big-number-sub">জানুয়ারি ২০২৮ থেকে</div>
+    </div>
+    <table class="breakdown-table" id="p3table"></table>
+    <div class="notice-box">মূল বেতন তৃতীয় পর্যায়ের সমান। ১ জানুয়ারি ২০২৮ থেকে সম্পূর্ণ ২০২৬ গেজেটের নতুন ভাতার হার: বাড়ি ভাড়া (গ্রেড-ভিত্তিক), চিকিৎসা (বয়স-ভিত্তিক ৩০০০/৪০০০), বাংলা নববর্ষ (১৫%, বার্ষিক), টিফিন (৫০০), যাতায়াত (৬০০), ধোলাই (৩০০), মোবাইল (৫০০/১৫০), শিক্ষা সহায়ক (৫০০/সন্তান, ২৩ বছর পর্যন্ত)। [SRO ৩৪৭-আইন/২০২৬, অনুচ্ছেদ ১৪]</div>
   </div>
 </div>
 
@@ -647,120 +736,180 @@ function getBanglaNum(n) {
 }
 
 function formatTaka(n) {
-  return '৳ ' + getBanglaNum(Math.round(n).toLocaleString('bn-BD'));
+  const formatted = Number.isInteger(n)
+    ? n.toLocaleString('en-IN')
+    : n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return '৳ ' + formatted.replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
 }
 
 function formatTakaSimple(n) {
-  const rounded = Math.round(n);
-  return '৳ ' + rounded.toLocaleString('en-IN').replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+  const formatted = Number.isInteger(n)
+    ? n.toLocaleString('en-IN')
+    : n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return '৳ ' + formatted.replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
 }
 
-// নতুন স্কেলে বেতন নির্ধারণ
-function fixSalary(grade, currentSalary) {
+// ২০২৬ স্কেলে বেতন নির্ধারণ (গেজেট অনুচ্ছেদ ৫)
+function fixSalary(grade, oldSalary) {
   if (grade === 1) return 156000;
-
   const old = scales2015[grade];
   const neo = scales2026[grade];
-
   if (!old || !neo) return neo[0];
-
-  const diff = currentSalary - old[0];
+  const diff = oldSalary - old[0];
   const target = neo[0] + diff;
-
-  // পরবর্তী উচ্চতর ধাপ খোঁজা
   for (let i = 0; i < neo.length; i++) {
     if (neo[i] >= target) return neo[i];
   }
   return neo[neo.length - 1];
 }
 
-// বাড়ি ভাড়া ভাতা (১ জানুয়ারি ২০২৮ থেকে - এর আগে পুরনো হারে)
-// ৩১ ডিসেম্বর ২০২৭ পর্যন্ত পুরনো ভাতা চলবে
-// তাই সকল ফেজে পুরনো হার ব্যবহার
-function getHRA(grade, baseSalary, area) {
-  // ১ জানুয়ারি ২০২৮ থেকে নতুন হার, তার আগে পুরনো হার
-  // গেজেটে ধারা ১(৩)(ঞ): অন্যান্য সকল ভাতা ৩১ ডিসেম্বর ২০২৭ পর্যন্ত পুরনো হারে
-  // তবে আমরা নতুন হারে দেখাচ্ছি কারণ ফেজ ৩ (জুলাই ২০২৭ থেকে) নতুন হার পাবে না
-  // Phase 0 ও 1: পুরনো ভাতা, Phase 2 (জুলাই ২০২৭): মূল বেতন পুরো কিন্তু ভাতা পুরনো
-  // Phase 3 (জানুয়ারি ২০২৮): নতুন হার
-  // সহজীকরণের জন্য: ফেজ ২ থেকে নতুন HRA হার দেখাচ্ছি (জুলাই ২০২৭ = পূর্ণ HRA)
+// ২০২৬ স্কেলে পরবর্তী ধাপ (বার্ষিক ইনক্রিমেন্ট)
+function getNextStep(grade, currentStep) {
+  if (grade === 1) return 156000; // গ্রেড ১ নির্ধারিত
+  const neo = scales2026[grade];
+  const idx = neo.indexOf(currentStep);
+  if (idx === -1) {
+    // exact match না পেলে পরবর্তী উচ্চতর ধাপ
+    for (let i = 0; i < neo.length; i++) {
+      if (neo[i] > currentStep) return neo[i];
+    }
+    return neo[neo.length - 1];
+  }
+  if (idx < neo.length - 1) return neo[idx + 1];
+  return neo[neo.length - 1]; // সর্বোচ্চ ধাপে আছেন
+}
 
+// জুলাই ২০২৬ বেতন থেকে ৩০ জুন ২০২৬ বেতন বের করা
+// জুলাই ২০২৬ = ৩০ জুন ২০২৬ বেতনের পরের ধাপ (ইনক্রিমেন্ট)
+function getJune30Salary(grade, julySalary) {
+  if (grade === 1) return 78000;
+  const old = scales2015[grade];
+  // julySalary ২০১৫ স্কেলের ধাপে থাকলে সরাসরি খোঁজা
+  const idx = old.indexOf(julySalary);
+  if (idx > 0) return old[idx - 1]; // আগের ধাপ = ৩০ জুন ২০২৬ বেতন
+  if (idx === 0) return old[0]; // প্রথম ধাপে আছেন, ইনক্রিমেন্ট হয় নি
+  // exact match না পেলে — julySalary নিজেই ৩০ জুন ২০২৬ বেতন হতে পারে
+  // (যদি জুলাই ২০২৬-এ ইনক্রিমেন্ট না লেগে থাকে)
+  return julySalary;
+}
+
+// =============================================
+// বাড়ি ভাড়া ভাতা
+// =============================================
+
+// ২০১৫ হার — ৩০ জুন ২০২৬ বেতনের উপর (Phase 0, 1, 2)
+function getHRA2015(baseSalary, area) {
+  let rate, minHRA;
+  if (baseSalary <= 9700) {
+    if (area === 'dhaka')           { rate = 0.65; minHRA = 5600; }
+    else if (area === 'other_city') { rate = 0.55; minHRA = 5000; }
+    else                            { rate = 0.50; minHRA = 4500; }
+  } else if (baseSalary <= 16000) {
+    if (area === 'dhaka')           { rate = 0.60; minHRA = 6400; }
+    else if (area === 'other_city') { rate = 0.50; minHRA = 5400; }
+    else                            { rate = 0.45; minHRA = 4800; }
+  } else if (baseSalary <= 35500) {
+    if (area === 'dhaka')           { rate = 0.55; minHRA = 9600; }
+    else if (area === 'other_city') { rate = 0.45; minHRA = 8000; }
+    else                            { rate = 0.40; minHRA = 7000; }
+  } else {
+    if (area === 'dhaka')           { rate = 0.50; minHRA = 19500; }
+    else if (area === 'other_city') { rate = 0.40; minHRA = 16000; }
+    else                            { rate = 0.35; minHRA = 13800; }
+  }
+  return Math.max(baseSalary * rate, minHRA);
+}
+
+// ২০২৬ হার — Phase 2 মূল বেতনের উপর (Phase 3)
+function getHRA2026(grade, baseSalary, area) {
   let rate = 0;
   if (grade >= 16 && grade <= 20) {
-    // গ্রেড ১৬-২০
-    if (area === 'dhaka') rate = 0.60;
+    if (area === 'dhaka')           rate = 0.60;
     else if (area === 'other_city') rate = 0.50;
-    else rate = 0.45;
+    else                            rate = 0.45;
   } else if (grade >= 10 && grade <= 15) {
-    // গ্রেড ১০-১৫
-    if (area === 'dhaka') rate = 0.50;
+    if (area === 'dhaka')           rate = 0.50;
     else if (area === 'other_city') rate = 0.40;
-    else rate = 0.35;
+    else                            rate = 0.35;
   } else if (grade >= 5 && grade <= 9) {
-    // গ্রেড ৫-৯
-    if (area === 'dhaka') rate = 0.45;
+    if (area === 'dhaka')           rate = 0.45;
     else if (area === 'other_city') rate = 0.35;
-    else rate = 0.30;
+    else                            rate = 0.30;
   } else {
-    // গ্রেড ১-৪
-    if (area === 'dhaka') rate = 0.40;
+    if (area === 'dhaka')           rate = 0.40;
     else if (area === 'other_city') rate = 0.30;
-    else rate = 0.25;
+    else                            rate = 0.25;
   }
-  return Math.round(baseSalary * rate);
+  return baseSalary * rate;
 }
 
-function getMedical() { return 1500; } // চিকিৎসা ভাতা (প্রচলিত)
+// =============================================
+// অন্যান্য ভাতা
+// =============================================
 
+// চিকিৎসা ভাতা — Phase 0,1,2: ১৫০০; Phase 3: বয়স-ভিত্তিক
+function getMedical(age, phase) {
+  if (phase < 3) return 1500;
+  return (age <= 50) ? 3000 : 4000;
+}
+
+// বাংলা নববর্ষ ভাতা — বার্ষিক, পহেলা বৈশাখে একবার প্রদেয়, মাসিক নয়
+// Phase 0-2: ২০% (২০১৫ গেজেট অনুচ্ছেদ ১৫, Art.1(3)(ঞ) অনুযায়ী জমাটবদ্ধ)
+// Phase 3 (জানু ২০২৮+): ১৫% (২০২৬ গেজেট অনুচ্ছেদ ১৪)
+function getBanglaNewYear(baseSalary, phase) {
+  const rate = (phase < 3) ? 0.20 : 0.15;
+  return baseSalary * rate;
+}
+
+// টিফিন ভাতা — গ্রেড ১১-২০ (গেজেট অনুচ্ছেদ ২০: ২০০ টাকা)
 function getTiffin(grade) {
-  return (grade >= 11 && grade <= 20) ? 500 : 0;
+  return (grade >= 11 && grade <= 20) ? 200 : 0;
 }
 
+// যাতায়াত ভাতা — গ্রেড ১১-২০, সিটি কর্পোরেশন এলাকা (গেজেট অনুচ্ছেদ ২২: ৩০০ টাকা)
 function getTransport(grade, area) {
-  if (grade >= 11 && grade <= 20 && area !== 'other') return 600;
+  if (grade >= 11 && grade <= 20 && (area === 'dhaka' || area === 'other_city')) return 300;
   return 0;
 }
 
-function getMobile(grade) {
-  if (grade <= 5) return 500;
-  return 150;
+// ধোলাই ভাতা — গ্রেড ১১-২০ (গেজেট অনুচ্ছেদ ২৩: ১০০ টাকা)
+function getWashing(grade) {
+  return (grade >= 11 && grade <= 20) ? 100 : 0;
 }
 
+// শিক্ষা সহায়ক ভাতা
 function getEducation(children) {
   return Math.min(parseInt(children), 2) * 500;
 }
 
-// ফেজ অনুযায়ী মূল বেতন হিসাব
-function getPhaseBasic(grade, currentSalary, fixedNew, phase) {
+// Phase 0-2 মূল বেতন (৩০ জুন ২০২৬ ভিত্তিক)
+function getPhaseBasic(grade, june30Salary, fixedNew, phase) {
   if (grade === 1) {
-    // গ্রেড ১: নির্ধারিত
-    const old = 78000;
-    const neo = 156000;
-    const diff = neo - old;
-    if (phase === 0) return old + diff * 0.40; // 40%
-    if (phase === 1) return old + diff * 0.70; // 70%
-    return neo; // 100%
+    const diff = 156000 - 78000;
+    if (phase === 0) return 78000 + diff * 0.40;
+    if (phase === 1) return 78000 + diff * 0.70;
+    return 156000;
   }
-
-  const diff = fixedNew - currentSalary;
+  const diff = fixedNew - june30Salary;
   if (grade <= 9) {
-    // ৯ম গ্রেড ও তদূর্ধ্ব
-    if (phase === 0) return currentSalary + diff * 0.40;
-    if (phase === 1) return currentSalary + diff * 0.70;
+    if (phase === 0) return june30Salary + diff * 0.40;
+    if (phase === 1) return june30Salary + diff * 0.70;
     return fixedNew;
   } else {
-    // ১০ম-২০তম গ্রেড
-    if (phase === 0) return currentSalary + diff * 0.50;
-    if (phase === 1) return currentSalary + diff * 0.75;
+    if (phase === 0) return june30Salary + diff * 0.50;
+    if (phase === 1) return june30Salary + diff * 0.75;
     return fixedNew;
   }
 }
 
 function buildTable(rows) {
   let html = '';
-  for (const [label, val, isTotal] of rows) {
+  for (const [label, val, isTotal, subtitle] of rows) {
     const cls = isTotal ? ' class="total-row"' : '';
-    html += `<tr${cls}><td>${label}</td><td>${val}</td></tr>`;
+    const labelHtml = subtitle
+      ? `${label}<br><span style="font-size:0.75rem;opacity:0.6;font-weight:400;">${subtitle}</span>`
+      : label;
+    html += `<tr${cls}><td>${labelHtml}</td><td>${val}</td></tr>`;
   }
   return html;
 }
@@ -774,10 +923,10 @@ function showPhase(idx, btn) {
 
 function calculate() {
   const gradeVal = document.getElementById('gradeSelect').value;
-  const currentSalaryVal = document.getElementById('currentSalary').value;
+  const salaryVal = document.getElementById('currentSalary').value;
   const area = document.querySelector('input[name="area"]:checked').value;
   const children = document.querySelector('input[name="children"]:checked').value;
-
+  const ageVal = document.getElementById('ageInput').value;
   const errorBox = document.getElementById('errorBox');
 
   if (!gradeVal) {
@@ -787,82 +936,181 @@ function calculate() {
   }
 
   const grade = parseInt(gradeVal);
-  let currentSalary;
+  const age = parseInt(ageVal) || 45;
+
+  let june30Salary; // ৩০ জুন ২০২৬ এর বেতন
+  let julySalary;   // জুলাই ২০২৬ এর বেতন (ইনপুট)
 
   if (grade === 1) {
-    currentSalary = 78000;
+    june30Salary = 78000;
+    julySalary = 78000;
   } else {
-    currentSalary = parseInt(currentSalaryVal);
-    if (!currentSalary || currentSalary < 1000) {
-      errorBox.textContent = 'সঠিক বর্তমান বেতন দিন (টাকার পরিমাণ)।';
+    julySalary = parseInt(salaryVal);
+    if (!julySalary || julySalary < 1000) {
+      errorBox.textContent = 'বর্তমান মূল বেতন সঠিকভাবে দিন।';
       errorBox.classList.add('visible');
       return;
     }
-    const scaleMin = scales2015[grade][0];
-    const scaleMax = scales2015[grade][scales2015[grade].length - 1];
-    if (currentSalary < scaleMin || currentSalary > scaleMax * 1.2) {
-      errorBox.textContent = `গ্রেড ${getBanglaNum(grade)} এর বেতন সীমা: ${getBanglaNum(scaleMin)} - ${getBanglaNum(scaleMax)} টাকা। সঠিক বেতন দিন।`;
+
+    // ২০১৫ স্কেলের বৈধ ধাপ কিনা যাচাই
+    const scale = scales2015[grade];
+    if (!scale.includes(julySalary)) {
+      errorBox.textContent = `গ্রেড ${getBanglaNum(grade)}-এর জন্য এই বেতন ২০১৫ স্কেলে নেই। সঠিক বেতন দিন।`;
       errorBox.classList.add('visible');
       return;
     }
+
+    june30Salary = getJune30Salary(grade, julySalary);
   }
 
   errorBox.classList.remove('visible');
 
-  const fixedNew = fixSalary(grade, currentSalary);
+  // ২০২৬ স্কেলে বেতন নির্ধারণ (৩০ জুন ২০২৬ ভিত্তিক)
+  const fixedNew = fixSalary(grade, june30Salary);
 
+  // Phase 2 মূল বেতন = পূর্ণ + ১ ইনক্রিমেন্ট
+  const phase2Basic = getNextStep(grade, fixedNew);
+
+  // ৩০ জুন ২০২৬ এর ভাতা (নির্দিষ্ট অঙ্ক — Phase 0,1,2 এ অপরিবর্তিত)
+  const june30HRA = getHRA2015(june30Salary, area);
+  const june30Medical = 1500;
+  const june30BNY = getBanglaNewYear(june30Salary, 0); // ২০% — বার্ষিক, পহেলা বৈশাখে একবার
+  const june30Tiffin = getTiffin(grade);
+  const june30Transport = getTransport(grade, area);
+  const june30Washing = getWashing(grade);
+  const june30Edu = getEducation(children);
+  // মাসিক মোটে নববর্ষ ভাতা যোগ হবে না — এটি বার্ষিক ভাতা
+  const june30Total = june30Salary + june30HRA + june30Medical + june30Tiffin + june30Transport + june30Washing + june30Edu;
+
+  // ৩০ জুন ২০২৬ কার্ড আপডেট
+  document.getElementById('june30Basic').textContent = formatTakaSimple(june30Salary);
+  document.getElementById('june30HRA').textContent = formatTakaSimple(june30HRA);
+  document.getElementById('june30Medical').textContent = formatTakaSimple(june30Medical);
+  document.getElementById('june30BNY').textContent = formatTakaSimple(june30BNY);
+  document.getElementById('june30Total').textContent = formatTakaSimple(june30Total);
+
+  if (june30Washing > 0) {
+    document.getElementById('june30WashRow').style.display = 'flex';
+    document.getElementById('june30Wash').textContent = formatTakaSimple(june30Washing);
+  } else {
+    document.getElementById('june30WashRow').style.display = 'none';
+  }
+
+  if (june30Tiffin > 0) {
+    document.getElementById('june30TiffinRow').style.display = 'flex';
+    document.getElementById('june30Tiffin').textContent = formatTakaSimple(june30Tiffin);
+  } else {
+    document.getElementById('june30TiffinRow').style.display = 'none';
+  }
+
+  if (june30Transport > 0) {
+    document.getElementById('june30TransportRow').style.display = 'flex';
+    document.getElementById('june30Transport').textContent = formatTakaSimple(june30Transport);
+  } else {
+    document.getElementById('june30TransportRow').style.display = 'none';
+  }
+
+  if (june30Edu > 0) {
+    document.getElementById('june30EduRow').style.display = 'flex';
+    document.getElementById('june30Edu').textContent = formatTakaSimple(june30Edu);
+  } else {
+    document.getElementById('june30EduRow').style.display = 'none';
+  }
+
+  // Phase 0, 1, 2 — মূল বেতন পরিবর্তন, ভাতা অপরিবর্তিত (৩০ জুন ২০২৬ অঙ্ক)
   for (let phase = 0; phase < 3; phase++) {
-    const basic = Math.round(getPhaseBasic(grade, currentSalary, fixedNew, phase));
-    const hra = getHRA(grade, basic, area);
-    const medical = getMedical();
-    const tiffin = getTiffin(grade);
-    const transport = getTransport(grade, area);
-    const mobile = getMobile(grade);
-    const education = getEducation(children);
-    const total = basic + hra + medical + tiffin + transport + mobile + education;
+    const basic = getPhaseBasic(grade, june30Salary, fixedNew, phase);
+    // Phase 2 তে ইনক্রিমেন্ট যোগ
+    const actualBasic = (phase === 2) ? phase2Basic : basic;
+
+    // ভাতা সবসময় ৩০ জুন ২০২৬ এর নির্দিষ্ট অঙ্ক (নববর্ষ বাদে — বার্ষিক)
+    const total = actualBasic + june30HRA + june30Medical + june30Tiffin + june30Transport + june30Washing + june30Edu;
+
+    const basicDiff = actualBasic - june30Salary;
+    const basicDiffStr = (basicDiff >= 0 ? '+' : '') + formatTaka(basicDiff);
+    const basicSubtitle = `পূর্বের ${formatTaka(june30Salary)} থেকে ${basicDiffStr}`;
 
     const rows = [
-      ['মূল বেতন', formatTaka(basic), false],
-      ['বাড়ি ভাড়া ভাতা', formatTaka(hra), false],
-      ['চিকিৎসা ভাতা', formatTaka(medical), false],
+      ['মূল বেতন', formatTaka(actualBasic), false, basicSubtitle],
+      ['বাড়ি ভাড়া ভাতা', formatTaka(june30HRA), false],
+      ['চিকিৎসা ভাতা', formatTaka(june30Medical), false],
     ];
-    if (tiffin > 0) rows.push(['টিফিন ভাতা', formatTaka(tiffin), false]);
-    if (transport > 0) rows.push(['যাতায়াত ভাতা', formatTaka(transport), false]);
-    rows.push(['মোবাইল ভাতা', formatTaka(mobile), false]);
-    if (education > 0) rows.push(['শিক্ষা সহায়ক ভাতা', formatTaka(education), false]);
+    if (june30Tiffin > 0) rows.push(['টিফিন ভাতা', formatTaka(june30Tiffin), false]);
+    if (june30Transport > 0) rows.push(['যাতায়াত ভাতা', formatTaka(june30Transport), false]);
+    if (june30Washing > 0) rows.push(['ধোলাই ভাতা', formatTaka(june30Washing), false]);
+    if (june30Edu > 0) rows.push(['শিক্ষা সহায়ক ভাতা', formatTaka(june30Edu), false]);
     rows.push(['মাসিক মোট', formatTaka(total), true]);
+    rows.push(['🗓 বাংলা নববর্ষ ভাতা (বার্ষিক)', formatTaka(june30BNY), false]);
 
     document.getElementById('p' + phase + 'total').textContent = formatTakaSimple(total);
     document.getElementById('p' + phase + 'table').innerHTML = buildTable(rows);
   }
 
+  // Phase 3 — জানুয়ারি ২০২৮ থেকে সম্পূর্ণ ২০২৬ গেজেটের নতুন হার
+  const p3HRA = getHRA2026(grade, phase2Basic, area);
+  const p3Medical = getMedical(age, 3);          // Art.13: ৩০০০/৪০০০
+  const p3BNY = getBanglaNewYear(phase2Basic, 3); // ১৫% বার্ষিক — ২০২৬ গেজেট অনুচ্ছেদ ১৪
+  // Art.19: টিফিন ৫০০ (grades 11-20)
+  const p3Tiffin = (grade >= 11 && grade <= 20) ? 500 : 0;
+  // Art.21: যাতায়াত ৬০০ (grades 11-20, সিটি কর্পোরেশন এলাকা)
+  const p3Transport = (grade >= 11 && grade <= 20 && (area === 'dhaka' || area === 'other_city')) ? 600 : 0;
+  // Art.23: ধোলাই ৩০০ (grades 11-20)
+  const p3Washing = (grade >= 11 && grade <= 20) ? 300 : 0;
+  // Art.22: মোবাইল ৫০০ (grade 1-5), ১৫০ (grade 6-20)
+  const p3Mobile = (grade >= 1 && grade <= 5) ? 500 : (grade >= 6 && grade <= 20) ? 150 : 0;
+  // Art.18: শিক্ষা সহায়ক ৫০০/সন্তান, ২৩ বছর পর্যন্ত
+  const p3Edu = Math.min(parseInt(children), 2) * 500;
+  // নববর্ষ বার্ষিক — মাসিক মোটে যোগ হবে না
+  const p3Total = phase2Basic + p3HRA + p3Medical + p3Tiffin + p3Transport + p3Washing + p3Mobile + p3Edu;
+
+  const p3BasicDiff = phase2Basic - june30Salary;
+  const p3BasicDiffStr = (p3BasicDiff >= 0 ? '+' : '') + formatTaka(p3BasicDiff);
+  const p3BasicSubtitle = `পূর্বের ${formatTaka(june30Salary)} থেকে ${p3BasicDiffStr}`;
+
+  const p3rows = [
+    ['মূল বেতন', formatTaka(phase2Basic), false, p3BasicSubtitle],
+    ['বাড়ি ভাড়া ভাতা (নতুন হার)', formatTaka(p3HRA), false],
+    ['চিকিৎসা ভাতা (নতুন হার)', formatTaka(p3Medical), false],
+  ];
+  if (p3Tiffin > 0) p3rows.push(['টিফিন ভাতা (নতুন হার)', formatTaka(p3Tiffin), false]);
+  if (p3Transport > 0) p3rows.push(['যাতায়াত ভাতা (নতুন হার)', formatTaka(p3Transport), false]);
+  if (p3Washing > 0) p3rows.push(['ধোলাই ভাতা (নতুন হার)', formatTaka(p3Washing), false]);
+  if (p3Mobile > 0) p3rows.push(['মোবাইল ভাতা (নতুন হার)', formatTaka(p3Mobile), false]);
+  if (p3Edu > 0) p3rows.push(['শিক্ষা সহায়ক ভাতা (নতুন হার)', formatTaka(p3Edu), false]);
+  p3rows.push(['মাসিক মোট', formatTaka(p3Total), true]);
+  p3rows.push(['🗓 বাংলা নববর্ষ ভাতা (বার্ষিক)', formatTaka(p3BNY), false]);
+
+  document.getElementById('p3total').textContent = formatTakaSimple(p3Total);
+  document.getElementById('p3table').innerHTML = buildTable(p3rows);
+
   const gradeBn = getBanglaNum(grade);
   document.getElementById('resultTitle').textContent = `গ্রেড ${gradeBn} - বেতন নির্ধারণ ফলাফল`;
-  document.getElementById('resultSub').textContent = `নতুন স্কেলে মূল বেতন: ${formatTakaSimple(fixedNew)} (বর্তমান: ${formatTakaSimple(currentSalary)})`;
+  document.getElementById('resultSub').textContent = `৩০ জুন ২০২৬: ${formatTakaSimple(june30Salary)} → ২০২৬ স্কেলে: ${formatTakaSimple(fixedNew)} → তৃতীয় পর্যায় (ইনক্রিমেন্টসহ): ${formatTakaSimple(phase2Basic)}`;
 
   const resultCard = document.getElementById('resultCard');
   resultCard.classList.add('visible');
   resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  // প্রথম ট্যাব সক্রিয় করা
   showPhase(0, document.querySelectorAll('.phase-tab')[0]);
 }
 
-// গ্রেড নির্বাচনে স্কেল হিন্ট
+// গ্রেড নির্বাচনে ২০১৫ স্কেলের সীমা দেখানো
 document.getElementById('gradeSelect').addEventListener('change', function() {
   const grade = parseInt(this.value);
   const hintEl = document.getElementById('scaleHint');
-  if (!grade || grade === 1) {
-    hintEl.textContent = grade === 1 ? 'গ্রেড ১ নির্ধারিত: ৭৮,০০০ টাকা' : '';
-    document.getElementById('currentSalaryGroup').style.opacity = grade === 1 ? '0.5' : '1';
+  document.getElementById('detectedSalaryGroup').style.display = 'none';
+
+  if (!grade) { hintEl.textContent = ''; return; }
+
+  if (grade === 1) {
+    hintEl.textContent = 'গ্রেড ১ নির্ধারিত: ৭৮,০০০ টাকা';
+    document.getElementById('currentSalaryGroup').style.opacity = '0.5';
     return;
   }
+
   const scale = scales2015[grade];
-  if (scale) {
-    const min = getBanglaNum(scale[0].toLocaleString('en-IN'));
-    const max = getBanglaNum(scale[scale.length-1].toLocaleString('en-IN'));
-    hintEl.textContent = `গ্রেড ${getBanglaNum(grade)} স্কেল: ${min} - ${max} টাকা`;
-  }
+  const min = scale[0];
+  const max = scale[scale.length - 1];
+  hintEl.textContent = `গ্রেড ${getBanglaNum(grade)} ২০১৫ স্কেলের সীমা: ${getBanglaNum(min.toLocaleString('en-IN'))} - ${getBanglaNum(max.toLocaleString('en-IN'))} টাকা`;
   document.getElementById('currentSalaryGroup').style.opacity = '1';
 });
 </script>
